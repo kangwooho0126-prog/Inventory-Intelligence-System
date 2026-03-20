@@ -31,7 +31,7 @@ def extract_dynamic_embeddings(
     sales_df: pd.DataFrame,
     item_id_col: str = "item_id"
 ) -> pd.DataFrame:
-    # 只保留数值列，避免日期列、文本列混进来
+    
     numeric_cols = sales_df.select_dtypes(include=["number"]).columns.tolist()
 
     if len(numeric_cols) == 0:
@@ -39,7 +39,7 @@ def extract_dynamic_embeddings(
 
     X_sales = sales_df[numeric_cols].values.astype(float)
 
-    # reshape 成 encoder 需要的输入格式: (样本数, 时间步, 1)
+   
     X_sales = X_sales.reshape((X_sales.shape[0], X_sales.shape[1], 1))
 
     X_dynamic = encoder.predict(X_sales, verbose=0)

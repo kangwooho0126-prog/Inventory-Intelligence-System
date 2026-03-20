@@ -25,7 +25,7 @@ def compute_cluster_statistics(sales_df, assign_df):
 
         cv = std_sales / (mean_sales + 1e-6)
 
-        # burst ratio：超过均值2倍的比例
+      
         burst_ratio = np.mean(X > 2 * mean_sales)
 
         results.append({
@@ -40,7 +40,7 @@ def compute_cluster_statistics(sales_df, assign_df):
     return pd.DataFrame(results)
 
 
-# ===== Pattern 分类规则 =====
+
 def classify_pattern(row):
     if row["zero_ratio"] > 0.6:
         return "Intermittent"
