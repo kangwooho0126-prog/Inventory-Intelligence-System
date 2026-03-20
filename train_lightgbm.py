@@ -59,10 +59,7 @@ def main():
             'cluster': c_val,
             'target': ts[-h:].mean()
         })
-    
-    df_feat = pd.DataFrame(data_list)
-    X = df_feat[['lag_28', 'rolling_mean_7', 'cluster']].copy()
-    X['cluster'] = X['cluster'].astype('category')
+     
     y = df_feat['target']
     
     # Train LightGBM model

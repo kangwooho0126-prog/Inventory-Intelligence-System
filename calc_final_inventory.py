@@ -3,38 +3,44 @@ import numpy as np
 import os
 
 def calculate_safety_stock(rmse, z_score=1.65, lead_time=7):
-    # 安全库存公式: Z * RMSE * sqrt(L/T)
+    """
+    Calculate Safety Stock using RMSE as a proxy for demand uncertainty.
+    z_score 1.65 corresponds to a 95% service level.
+    """
     return z_score * rmse * np.sqrt(lead_time)
 
 def main():
-    # 读取你跑出来的明细表
+    # Define data path
     path = "results/forecasting/evaluation_metrics_by_sku.csv"
     if not os.path.exists(path):
-        print("❌ 找不到明细表，请检查路径。")
+        print(f"Error: File not found at {path}. Please check the directory.")
         return
 
+    # Load SKU-level evaluation metrics
     df = pd.read_csv(path)
     
-    # 业务假设
-    unit_cost = 15.0  # 假设每个SKU平均价值 15元
+    # Financial assumption: Average unit holding cost ($)
+    unit_cost = 15.0  
     
-    # 计算两种策略的安全库存量
+    # Calculate Safety Stock (SS) for both specialized and baseline models
     df['ss_spec'] = calculate_safety_stock(df['rmse_spec'])
     df['ss_base'] = calculate_safety_stock(df['rmse_base'])
     
-    # 计算节省的钱
+    # Quantify financial savings from improved forecasting accuracy
     df['saving'] = (df['ss_base'] - df['ss_spec']) * unit_cost
     
     total_money_saved = df['saving'].sum()
     
-    print("\n" + "="*50)
-    print("🚀 最终项目成果汇报")
-    print("="*50)
-    print(f"参与评估的 SKU 总数: {len(df)}")
-    print(f"预测精度提升带来的库存节省总额: ${total_money_saved:,.2f}")
-    print("="*50)
-    print("💡 建议将此数字写进简历的开头第一句话！")
+    # Generate Professional Impact Report
+    print("\n" + "="*60)
+    print("      PROJECT IMPACT REPORT: INVENTORY OPTIMIZATION")
+    print("="*60)
+    print(f"Total SKUs Evaluated          : {len(df)}")
+    print(f"Total Inventory Cost Savings  : ${total_money_saved:,.2f}")
+    print("="*60)
+    print("Optimization Insight: Accuracy improvements directly reduce")
+    print("safety stock requirements and associated holding costs.")
+    print("="*60)
 
 if __name__ == "__main__":
     main()
-    
