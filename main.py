@@ -1,13 +1,11 @@
 import sys
 import os
+import pandas as pd
 
-# 核心修复：获取 main.py 所在的绝对目录，并强行插入到 Python 搜索路径的最前面
-# 这样可以确保 Python 绝对优先从当前项目的 src 文件夹找模块，避免任何路径遗失或命名冲突
+# Ensure the project root is in Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
-
-import pandas as pd
 
 from src.feature_fusion import (
     load_static_features,
@@ -28,39 +26,42 @@ from src.pattern_analysis import (
     assign_pattern_labels
 )
 
+from src.inventory_decision import inventory_decision
+
 
 def main():
     static_csv_path = "results/static_features_12d.csv"
     dynamic_csv_path = "data/dynamic_features_16d.csv"
     sales_csv_path = "data/m5_sales_subset.csv"
 
-    # 1. load features
+    # 1. Load features
     static_df = load_static_features(static_csv_path)
     dynamic_df = load_dynamic_features(dynamic_csv_path)
 
-    # 2. fuse
+    # 2. Feature fusion
     fused_df = fuse_static_dynamic_features(static_df, dynamic_df)
 
-    # 3. clustering
+    # 3. Clustering
     metrics_df, best_results = run_kmeans_multiple_k(
         fused_df,
         k_range=range(3, 9),
         n_runs=20
     )
 
-    # 4. save metrics
-    metrics_df.to_csv("results/fused_clustering_metrics.csv", index=False)
-    print("\nSaved: results/fused_clustering_metrics.csv")
-    print(metrics_df)
+    # 4. Save clustering metrics
+    metrics_output_path = "results/fused_clustering_metrics.csv"
+    metrics_df.to_csv(metrics_output_path, index=False)
+    print(f"Saved: {metrics_output_path}")
 
-    # 5. save assignments
+    # 5. Save cluster assignments for each K
     for k, result in best_results.items():
         save_path = f"results/cluster_assignments_k{k}.csv"
         result["assignment_df"].to_csv(save_path, index=False)
         print(f"Saved: {save_path}")
 
-    # 6. visualization (use K=7)
-    assign_csv_path = "results/cluster_assignments_k7.csv"
+    # 6. Visualization (use K=7 as example)
+    selected_k = 7
+    assign_csv_path = f"results/cluster_assignments_k{selected_k}.csv"
 
     sales_df = load_sales_data(sales_csv_path)
     assign_df = load_cluster_assignments(assign_csv_path)
@@ -68,19 +69,70 @@ def main():
     plot_cluster_mean_patterns(
         sales_df,
         assign_df,
-        save_path="results/cluster_patterns_k7.png"
+        save_path=f"results/cluster_patterns_k{selected_k}.png"
     )
 
-    # 7. pattern analysis
-    print("\n=== Pattern Analysis ===")
-
+    # 7. Pattern analysis
     stats_df = compute_cluster_statistics(sales_df, assign_df)
     stats_df = assign_pattern_labels(stats_df)
 
-    stats_df.to_csv("results/cluster_pattern_summary.csv", index=False)
+    print("stats_df columns:", list(stats_df.columns))
 
-    print("\nCluster Pattern Summary:")
-    print(stats_df)
+    pattern_summary_path = "results/cluster_pattern_summary.csv"
+    stats_df.to_csv(pattern_summary_path, index=False)
+    print(f"Saved: {pattern_summary_path}")
+
+    # 8. Inventory decision module
+    if "pattern_label" in stats_df.columns:
+        pattern_col = "pattern_label"
+    elif "pattern" in stats_df.columns:
+        pattern_col = "pattern"
+    elif "pattern_type" in stats_df.columns:
+        pattern_col = "pattern_type"
+    else:
+        raise KeyError(
+            f"No pattern column found in stats_df. Available columns: {list(stats_df.columns)}"
+        )
+
+    merged_df = assign_df.merge(
+        stats_df[["cluster", pattern_col]],
+        on="cluster",
+        how="left"
+    )
+
+    inventory_results = []
+
+    for _, row in merged_df.iterrows():
+        pattern = row[pattern_col]
+
+        # Demo values for decision support
+        # These can later be replaced with SKU-level real demand statistics
+        mean_demand = 50
+        std = 10
+        lead_time = 7
+
+        decision = inventory_decision(
+            mean_demand=mean_demand,
+            std=std,
+            lead_time=lead_time,
+            pattern=pattern
+        )
+
+        inventory_results.append({
+            "item_id": row["item_id"],
+            "cluster": row["cluster"],
+            "pattern": pattern,
+            "mean_demand": mean_demand,
+            "std": std,
+            "lead_time": lead_time,
+            "safety_stock": decision["safety_stock"],
+            "reorder_point": decision["reorder_point"]
+        })
+
+    inventory_df = pd.DataFrame(inventory_results)
+    inventory_output_path = f"results/inventory_decision_k{selected_k}.csv"
+    inventory_df.to_csv(inventory_output_path, index=False)
+    print(f"Saved: {inventory_output_path}")
 
 
 if __name__ == "__main__":
