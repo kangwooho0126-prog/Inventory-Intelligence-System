@@ -3,9 +3,7 @@ import shutil
 
 ROOT = Path(__file__).resolve().parent
 
-# =========================
-# 1. Define target folders
-# =========================
+
 TARGET_DIRS = [
     ROOT / "data" / "raw",
     ROOT / "data" / "processed",
@@ -20,18 +18,14 @@ TARGET_DIRS = [
     ROOT / "src" / "utils",
 ]
 
-# =========================
-# 2. Create target folders
-# =========================
+
 def ensure_directories():
     for folder in TARGET_DIRS:
         folder.mkdir(parents=True, exist_ok=True)
     print("Created/verified directory structure.")
 
 
-# =========================
-# 3. Safe move function
-# =========================
+
 def safe_move(src: Path, dst: Path):
     if not src.exists():
         print(f"[SKIP] Source not found: {src}")
@@ -46,9 +40,7 @@ def safe_move(src: Path, dst: Path):
     print(f"[MOVED] {src} -> {dst}")
 
 
-# =========================
-# 4. Move root-level scripts
-# =========================
+
 def move_root_scripts():
     file_map = {
         ROOT / "data_loader.py": ROOT / "src" / "data" / "data_loader.py",
@@ -62,9 +54,7 @@ def move_root_scripts():
         safe_move(src, dst)
 
 
-# =========================
-# 5. Move result files
-# =========================
+
 def move_result_files():
     file_map = {
         ROOT / "results" / "cluster_assignments_k3.csv": ROOT / "results" / "clustering" / "cluster_assignments_k3.csv",
@@ -84,10 +74,7 @@ def move_result_files():
         safe_move(src, dst)
 
 
-# =========================
-# 6. Clean up forecasting files
-#    (already in results/forecasting, keep as is)
-# =========================
+
 def ensure_forecasting_files():
     forecasting_files = [
         ROOT / "results" / "forecasting" / "evaluation_metrics_by_sku.csv",
@@ -103,9 +90,7 @@ def ensure_forecasting_files():
             print(f"[WARN] Forecasting file not found: {file}")
 
 
-# =========================
-# 7. Print final tree summary
-# =========================
+
 def print_summary():
     print("\nSuggested final structure:")
     print(

@@ -121,28 +121,27 @@ Different demand patterns use different cost structures:
 
 ##  Project Structure
 
+```text
 M5-CENSORED-DEMAND-PATTERNS/
-├─ data/
-│  ├─ raw/
-│  └─ processed/
-│     └─ static_features_12d.csv
-│
-├─ results/
-│  ├─ clustering/
-│  ├─ forecasting/
-│  └─ decision/
-│
-├─ src/
-│  ├─ data/
-│  ├─ features/
-│  ├─ clustering/
-│  ├─ forecasting/
-│  ├─ decision/
-│  └─ optimization/
-│
-├─ main.py
-├─ requirements.txt
-└─ README.md
+├── data/
+│   ├── raw/
+│   └── processed/
+│       └── static_features_12d.csv
+├── results/
+│   ├── clustering/        
+│   ├── forecasting/       
+│   └── decision/          
+├── src/
+│   ├── data/            
+│   ├── features/         
+│   ├── clustering/       
+│   ├── forecasting/       
+│   ├── decision/         
+│   └── optimization/      
+├── main.py
+├── requirements.txt
+└── README.md
+```
 
 ---
 
