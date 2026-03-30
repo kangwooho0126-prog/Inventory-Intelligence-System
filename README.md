@@ -1,7 +1,5 @@
 # Inventory-Intelligence-System
 
-# Inventory Intelligence System
-
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![Forecasting](https://img.shields.io/badge/Forecasting-Demand%20Prediction-orange)
 ![Clustering](https://img.shields.io/badge/Clustering-Demand%20Patterns-yellow)
