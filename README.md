@@ -1,5 +1,14 @@
 # Inventory-Intelligence-System
 
+# Inventory Intelligence System
+
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![Forecasting](https://img.shields.io/badge/Forecasting-Demand%20Prediction-orange)
+![Clustering](https://img.shields.io/badge/Clustering-Demand%20Patterns-yellow)
+![Inventory Optimization](https://img.shields.io/badge/Inventory-Intelligence-green)
+![Pandas](https://img.shields.io/badge/Pandas-Data%20Processing-red)
+![Research Project](https://img.shields.io/badge/Project-Academic%20Research-purple)
+
 ##  Project Overview
 
 This project develops an end-to-end intelligent system for detecting slow-moving and censored demand patterns and optimizing inventory policies.
