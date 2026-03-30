@@ -129,7 +129,7 @@ Different demand patterns use different cost structures:
 ##  Project Structure
 
 ```text
-M5-CENSORED-DEMAND-PATTERNS/
+M5-inventory-intelligence-system/
 ├── data/
 │   ├── raw/
 │   └── processed/
