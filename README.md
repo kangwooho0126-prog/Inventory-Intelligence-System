@@ -1,4 +1,4 @@
-# AI-Driven Slow-Moving Inventory Detection and Optimization System
+# Inventory-Intelligence-System
 
 ##  Project Overview
 
